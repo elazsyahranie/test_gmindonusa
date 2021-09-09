@@ -55,11 +55,13 @@ module.exports = {
           }
         })
 
+        console.log(result.id)
+
         const mailOptions = {
           from: "'TALKAGRAM'", // sender address
           to: userEmail, // list of receivers
           subject: 'TALKAGRAM - Activation Email', // Subject line
-          html: `<h6>Hi there! </h6><a href='http://localhost:3003/api/v1/auth/verify-user/${result.id}'>Click here</> to activate your account!` // html body
+          html: `<h2>Hi there! </h2><a href='http://localhost:3007/api/v1/auth/verify-user/${result.id}'>Click here</> to activate your account!` // html body
         }
 
         await transporter.sendMail(mailOptions, function (error, info) {
@@ -167,9 +169,7 @@ module.exports = {
         userId = token.userId
         setData = token.setData
       }
-
       if (userId && setData) {
-        // console.log('Update', setData)
         const result = await authModel.updateData(setData, userId)
         return helper.response(
           res,

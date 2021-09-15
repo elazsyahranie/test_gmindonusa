@@ -35,9 +35,9 @@ const io = socket(server, {
 io.on('connection', (socket) => {
   console.log('Socket.io connect !')
   // Harus sama dengan di Frontend. 'globalMessage' ya 'globalMessage'
-  socket.on('globalMessage', (data) => {
-    console.log(data)
-  })
+  // socket.on('globalMessage', (data) => {
+  //   console.log(data)
+  // })
 })
 
 server.listen(port, () => {

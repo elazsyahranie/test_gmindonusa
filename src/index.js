@@ -32,8 +32,13 @@ const io = socket(server, {
   },
   path: '/backend3/socket.io'
 })
+// globalMessage = pesan yang dikirimkan ke semua client
 io.on('connection', (socket) => {
   console.log('Socket.io connect !')
+  socket.on('globalMessage', (data) => {
+    console.log(data)
+    io.emit('chatMessage', data)
+  })
   // Harus sama dengan di Frontend. 'globalMessage' ya 'globalMessage'
   // socket.on('globalMessage', (data) => {
   //   console.log(data)

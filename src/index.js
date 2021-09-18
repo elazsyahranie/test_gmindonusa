@@ -32,17 +32,24 @@ const io = socket(server, {
   },
   path: '/backend3/socket.io'
 })
-// globalMessage = pesan yang dikirimkan ke semua client
 io.on('connection', (socket) => {
   console.log('Socket.io connect !')
+  // Global Message -- Dikirim ke semua client, dan termasuk pengirim
   socket.on('globalMessage', (data) => {
     console.log(data)
     io.emit('chatMessage', data)
   })
+  // Private Message -- Hanya dikirim ke kita saja (hanya penngirim yang bisa baca pesannya)
+  socket.on('privateMessage', (data) => {
+    console.log(data)
+    socket.emit('chatMessage', data)
+  })
+  // Broadcast Message -- Dikirim ke semua client, tapi tidak termasuk pengirim
+  socket.on('broadcastMessage', (data) => {
+    console.log(data)
+    socket.broadcast.emit('chatMessage', data)
+  })
   // Harus sama dengan di Frontend. 'globalMessage' ya 'globalMessage'
-  // socket.on('globalMessage', (data) => {
-  //   console.log(data)
-  // })
 })
 
 server.listen(port, () => {

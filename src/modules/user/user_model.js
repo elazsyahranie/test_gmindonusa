@@ -45,22 +45,6 @@ module.exports = {
       )
     })
   },
-  register: (data) => {
-    return new Promise((resolve, reject) => {
-      connection.query('INSERT INTO user SET ?', data, (error, result) => {
-        console.log(error)
-        if (!error) {
-          const newResult = {
-            id: result.insertId,
-            ...data
-          }
-          resolve(newResult)
-        } else {
-          reject(new Error(error))
-        }
-      })
-    })
-  },
   getDataConditions: (data) => {
     return new Promise((resolve, reject) => {
       connection.query('SELECT * FROM user WHERE ?', data, (error, result) => {
@@ -79,32 +63,11 @@ module.exports = {
       )
     })
   },
-  getDataBalanceByCondition: (condition) => {
+  getContactData: (condition) => {
     return new Promise((resolve, reject) => {
       connection.query(
-        'SELECT * FROM balance WHERE ?',
+        'SELECT * FROM contact INNER JOIN user ON contact.contact_friend_id = user.user_id WHERE ?',
         condition,
-        (error, result) => {
-          !error ? resolve(result) : reject(new Error(error))
-        }
-      )
-    })
-  },
-  getDataTransactionByCondition: (condition) => {
-    return new Promise((resolve, reject) => {
-      connection.query(
-        'SELECT * FROM transaction WHERE ?',
-        condition,
-        (error, result) => {
-          !error ? resolve(result) : reject(new Error(error))
-        }
-      )
-    })
-  },
-  getUserTransactionList: (id) => {
-    return new Promise((resolve, reject) => {
-      connection.query(
-        `SELECT DATE(transaction_created_at) AS DATE, SUM(transaction_amount) AS totalAmount FROM transaction WHERE transaction_sender_id = ${id} AND WEEK(transaction_created_at) = WEEK(NOW()) GROUP BY DATE(transaction_created_at);`,
         (error, result) => {
           !error ? resolve(result) : reject(new Error(error))
         }

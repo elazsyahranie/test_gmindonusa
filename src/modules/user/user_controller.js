@@ -7,7 +7,6 @@ const client = redis.createClient()
 const userModel = require('./user_model')
 require('dotenv').config()
 const jwt = require('jsonwebtoken')
-const nodemailer = require('nodemailer')
 
 module.exports = {
   getAllUser: async (req, res) => {
@@ -93,96 +92,6 @@ module.exports = {
       )
     } catch (error) {
       console.log(error)
-      return helper.response(res, 400, 'Bad Request', error)
-    }
-  },
-  register: async (req, res) => {
-    try {
-      const { userName, userEmail, userPassword } = req.body
-      const salt = bcrypt.genSaltSync(10)
-      const encryptPassword = bcrypt.hashSync(userPassword, salt)
-      const setData = {
-        user_name: userName,
-        user_email: userEmail,
-        user_password: encryptPassword
-      }
-
-      const checkEmailUser = await userModel.getDataByCondition({
-        user_email: userEmail
-      })
-
-      if (checkEmailUser.length === 0) {
-        const result = await userModel.register(setData)
-        delete result.user_password
-        const transporter = nodemailer.createTransport({
-          host: 'smtp.gmail.com',
-          port: 587,
-          secure: false, // true for 465, false for other ports
-          auth: {
-            user: process.env.SMTP_EMAIL, // generated ethereal user
-            pass: process.env.SMTP_PASSWORD // generated ethereal password
-          }
-        })
-
-        const mailOptions = {
-          from: "'DIGIWALLET'", // sender address
-          to: userEmail, // list of receivers
-          subject: 'DIGIWALLET - Activation Email', // Subject line
-          html: `<h6>Hi there! </h6><a href='http://localhost:3003/api/v1/auth/verify-user/${result.id}'>Click here</> to activate your account!` // html body
-        }
-
-        await transporter.sendMail(mailOptions, function (error, info) {
-          if (error) {
-            console.log(error)
-            return helper.response(res, 400, 'Email Not Send !')
-          } else {
-            console.log('Email sent: ' + info.response)
-            return helper.response(res, 200, 'Activation Email Sent')
-          }
-        })
-        return helper.response(res, 200, 'Success Register User', result)
-      } else {
-        return helper.response(res, 400, 'Email Already Registered')
-      }
-    } catch (error) {
-      return helper.response(res, 400, 'Bad Request', error)
-    }
-  },
-  login: async (req, res) => {
-    try {
-      // console.log(req.body)
-      const { userEmail, userPassword } = req.body
-      const checkUserEmail = await userModel.getDataConditions({
-        user_email: userEmail
-      })
-
-      if (checkUserEmail.length > 0) {
-        if (checkUserEmail[0].user_verification === 0) {
-          return helper.response(res, 403, 'Account is not verified')
-        }
-
-        const checkPassword = bcrypt.compareSync(
-          userPassword,
-          checkUserEmail[0].user_password
-        )
-
-        if (checkPassword) {
-          console.log('User berhasil login')
-          const payload = checkUserEmail[0]
-          delete payload.user_password
-          const token = jwt.sign({ ...payload }, process.env.PRIVATE_KEY, {
-            expiresIn: '24h'
-          })
-
-          const result = { ...payload, token }
-          return helper.response(res, 200, 'Succes Login !', result)
-        } else {
-          return helper.response(res, 400, 'Password incorrect')
-        }
-      } else {
-        return helper.response(res, 404, 'Email not registered')
-      }
-    } catch (error) {
       return helper.response(res, 400, 'Bad Request', error)
     }
   },
@@ -272,74 +181,17 @@ module.exports = {
       return helper.response(res, 400, 'Bad Request', error)
     }
   },
-  getUserExpense: async (req, res) => {
+  getContacts: async (req, res) => {
     try {
       const { id } = req.params
-      const result = await userModel.getDataTransactionByCondition({
-        transaction_sender_id: id
-      })
+      const result = await userModel.getContactData({ contact_user_id: id })
       if (result.length > 0) {
-        const mappedResult = result.map((a) => a.transaction_amount)
-        let sum = 0
-        for (let i = 0; i < mappedResult.length; i++) {
-          sum += mappedResult[i]
-        }
-        return helper.response(
-          res,
-          200,
-          `Success get expense data by id - ${id}`,
-          sum
-        )
+        client.set(`getuserid:${id}`, JSON.stringify(result))
+        return helper.response(res, 200, 'Succes get contacts data', result)
       } else {
-        return helper.response(res, 200, `Data By Id ${id} Not Found !`, null)
+        return helper.response(res, 404, 'Contacts data not found!', result)
       }
     } catch (error) {
-      console.log(error)
-      return helper.response(res, 400, 'Bad Request', error)
-    }
-  },
-  getUserIncome: async (req, res) => {
-    try {
-      const { id } = req.params
-      const result = await userModel.getDataTransactionByCondition({
-        transaction_receiver_id: id
-      })
-      if (result.length > 0) {
-        const mappedResult = result.map((a) => a.transaction_amount)
-        let sum = 0
-        for (let i = 0; i < mappedResult.length; i++) {
-          sum += mappedResult[i]
-        }
-        return helper.response(
-          res,
-          200,
-          `Success get income data by id - ${id}`,
-          sum
-        )
-      } else {
-        return helper.response(res, 200, `Data By Id ${id} Not Found !`, null)
-      }
-    } catch (error) {
-      console.log(error)
-      return helper.response(res, 400, 'Bad Request', error)
-    }
-  },
-  getUserTransactionListOrderBy: async (req, res) => {
-    try {
-      const { id } = req.params
-      const result = await userModel.getUserTransactionList(id)
-      if (result.length > 0) {
-        return helper.response(
-          res,
-          200,
-          `Success get data for chart by id - ${id}`,
-          result
-        )
-      } else {
-        return helper.response(res, 200, `Data By Id ${id} Not Found !`, null)
-      }
-    } catch (error) {
-      console.log(error)
       return helper.response(res, 400, 'Bad Request', error)
     }
   },

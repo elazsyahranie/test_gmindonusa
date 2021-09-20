@@ -23,6 +23,25 @@ module.exports = {
       })
     }
   },
+  getContactsRedis: (req, res, next) => {
+    const { id } = req.params
+    if (id) {
+      client.get(`getcontacts:${id}`, (error, result) => {
+        if (!error && result != null) {
+          console.log('data ada di dalam redis')
+          return helper.response(
+            res,
+            200,
+            `Succes Get Contacts by Id ${id} (Redis)`,
+            JSON.parse(result)
+          )
+        } else {
+          console.log('Data tidak ada dalam redis')
+          next()
+        }
+      })
+    }
+  },
   getUserSearchKeywordRedis: (req, res, next) => {
     const { keyword } = req.query
     if (keyword) {

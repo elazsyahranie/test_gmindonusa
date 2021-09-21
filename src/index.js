@@ -49,6 +49,15 @@ io.on('connection', (socket) => {
     console.log(data)
     socket.broadcast.emit('chatMessage', data)
   })
+  // Room Message
+  socket.on('joinRoom', (data) => {
+    socket.join(data.room)
+    console.log(data)
+    socket.broadcast.to(data.room).emit('chatMessage', {
+      user_name: 'BOT',
+      message: `${data.user_name} joined chat!`
+    })
+  })
   // Harus sama dengan di Frontend. 'globalMessage' ya 'globalMessage'
 })
 

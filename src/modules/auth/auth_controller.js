@@ -82,6 +82,39 @@ module.exports = {
       return helper.response(res, 400, 'Bad Request', error)
     }
   },
+  createRoom: async (req, res) => {
+    try {
+      const { userId, friendId } = req.body
+      const generateNumber = Math.floor(Math.random() * 20)
+      const multiplyIDNumbers = userId * friendId
+      const roomChat = generateNumber + multiplyIDNumbers
+      console.log(generateNumber)
+      console.log(multiplyIDNumbers)
+      console.log(`${generateNumber} + ${multiplyIDNumbers} = ${roomChat}`)
+      const setData = {
+        room_chat: roomChat,
+        user_id: userId,
+        friend_id: friendId
+      }
+      const setData2 = {
+        room_chat: roomChat,
+        user_id: friendId,
+        friend_id: userId
+      }
+      const result = await authModel.insertRoom(setData)
+      const result2 = await authModel.insertRoom(setData2)
+      return helper.response(
+        res,
+        200,
+        'Successfuly make room chat!',
+        result,
+        result2
+      )
+    } catch (error) {
+      console.log(error)
+      return helper.response(res, 400, 'Bad Request', error)
+    }
+  },
   login: async (req, res) => {
     try {
       // console.log(req.body)

@@ -60,9 +60,9 @@ module.exports = {
       })
     })
   },
-  insertBalance: (data) => {
+  insertRoom: (data) => {
     return new Promise((resolve, reject) => {
-      connection.query('INSERT INTO balance SET ?', data, (error, result) => {
+      connection.query('INSERT INTO room_chat SET ?', data, (error, result) => {
         console.log(error)
         if (!error) {
           const newResult = {

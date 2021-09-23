@@ -94,92 +94,6 @@ module.exports = {
       return helper.response(res, 400, 'Bad Request', error)
     }
   },
-  getUserById: async (req, res) => {
-    try {
-      const { id } = req.params
-      const result = await userModel.getDataByCondition({ user_id: id })
-      const resultBalance = await userModel.getDataBalanceByCondition({
-        user_id: id
-      })
-      const resultTransactionHistory =
-        await userModel.getDataTransactionByCondition({
-          transaction_sender_id: id
-        })
-      // USER, BALANCE and TRANSACTION HISTORY available
-      if (
-        result.length > 0 &&
-        resultBalance.length > 0 &&
-        resultTransactionHistory.length > 0
-      ) {
-        const allResults = { result, resultBalance, resultTransactionHistory }
-        client.set(`getuserid:${id}`, JSON.stringify(allResults))
-        return helper.response(
-          res,
-          200,
-          `Success Get Data By Id ${id}, with User, Balance and Transaction History!`,
-          allResults
-        )
-      }
-      // USER and TRANSACTION HISTORY available, but not BALANCE
-      if (
-        result.length > 0 &&
-        resultBalance.length === 0 &&
-        resultTransactionHistory.length > 0
-      ) {
-        const allResults = {
-          result: result,
-          resultBalance: { balance: 0 },
-          resultTransactionHistory: resultTransactionHistory
-        }
-        client.set(`getuserid:${id}`, JSON.stringify(allResults))
-        return helper.response(
-          res,
-          200,
-          `Success Get Data By Id ! ${id}, with User and Transaction History but no Balance!`,
-          allResults
-        )
-      }
-      // USER and BALANCE available, but not TRANSACTION HISTORY
-      if (
-        result.length > 0 &&
-        resultBalance.length > 0 &&
-        resultTransactionHistory.length === 0
-      ) {
-        const allResults = { result, resultBalance, resultTransactionHistory }
-        client.set(`getuserid:${id}`, JSON.stringify(allResults))
-        return helper.response(
-          res,
-          200,
-          `Success Get Data By Id ! ${id}, with User and Balance but no Transaction History!`,
-          allResults
-        )
-      }
-      // USER available, but not BALANCE and TRANSACTION HISTORY
-      if (
-        result.length > 0 &&
-        resultBalance.length === 0 &&
-        resultTransactionHistory.length === 0
-      ) {
-        const allResults = {
-          result: result,
-          resultBalance: [{ balance: 0 }],
-          resultTransactionHistory: resultTransactionHistory
-        }
-        client.set(`getuserid:${id}`, JSON.stringify(allResults))
-        return helper.response(
-          res,
-          200,
-          `Success Get Data By Id ! ${id}, only User but no Transaction History and Balance!`,
-          allResults
-        )
-      } else {
-        return helper.response(res, 200, `Data By Id ${id} Not Found !`, null)
-      }
-    } catch (error) {
-      console.log(error)
-      return helper.response(res, 400, 'Bad Request', error)
-    }
-  },
   createRoom: async (req, res) => {
     try {
       const { userId, friendId } = req.body
@@ -200,6 +114,16 @@ module.exports = {
     } catch (error) {
       console.log(error)
       return helper.response(res, 400, 'Bad Request', error)
+    }
+  },
+  getRoomList: async (req, res) => {
+    try {
+      const { id } = req.params
+      const result = await userModel.findRoomList({ user_id: id })
+      return helper.response(res, 200, 'Succesfully get list of rooms!', result)
+    } catch (error) {
+      console.log(error)
+      return helper.response(res, 400, 'Bad request', error)
     }
   },
   addFriend: async (req, res) => {

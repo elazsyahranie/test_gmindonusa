@@ -13,10 +13,10 @@ const {
   getAllUser,
   getAllUsernameAscending,
   getUsernameSearchKeyword,
-  getUserById,
   getContacts,
   addFriend,
   createRoom,
+  getRoomList,
   changeUserVerification,
   updateUser,
   updateUserPassword,
@@ -28,10 +28,10 @@ const {
 Route.get('/', getAllUser)
 Route.get('/keyword', getUserSearchKeywordRedis, getUsernameSearchKeyword)
 Route.get('/ascend', getAllUsernameAscending)
-Route.get('/:id', getUserByIdRedis, getUserById)
 Route.get('/contacts/:id', getUserByIdRedis, getContacts)
 Route.post('/add-friend', clearDataUserRedis, addFriend)
 Route.post('/create-room', clearDataUserRedis, createRoom)
+Route.get('/get-room-list/:id', getRoomList)
 Route.get('/verify-user/:token', changeUserVerification)
 Route.patch('/:id', clearDataUserRedis, updateUser)
 Route.patch('/update-password/:id', clearDataUserRedis, updateUserPassword)

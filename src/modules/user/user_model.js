@@ -45,6 +45,29 @@ module.exports = {
       )
     })
   },
+  findRoom: (idOne, idTwo) => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        `SELECT * FROM contact WHERE contact_user_id = ${idOne} AND contact_friend_id = ${idTwo}`,
+        (error, result) => {
+          console.log(result)
+          !error ? resolve(result) : reject(new Error(result))
+        }
+      )
+    })
+  },
+  findRoomList: (condition) => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        'SELECT * FROM room_chat WHERE ?',
+        condition,
+        (error, result) => {
+          console.log(result)
+          !error ? resolve(result) : reject(new Error(result))
+        }
+      )
+    })
+  },
   addContact: (data) => {
     return new Promise((resolve, reject) => {
       connection.query('INSERT INTO contact SET ?', data, (error, result) => {

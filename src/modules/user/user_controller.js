@@ -119,7 +119,7 @@ module.exports = {
   getRoomList: async (req, res) => {
     try {
       const { id } = req.params
-      const result = await userModel.findRoomList({ user_id: id })
+      const result = await userModel.findRoomList(id)
       return helper.response(res, 200, 'Succesfully get list of rooms!', result)
     } catch (error) {
       console.log(error)

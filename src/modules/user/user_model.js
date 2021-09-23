@@ -56,11 +56,11 @@ module.exports = {
       )
     })
   },
-  findRoomList: (condition) => {
+  // SELECT * FROM user JOIN balance ON user.user_id = balance.user_id WHERE user.user_id = ${id}
+  findRoomList: (id) => {
     return new Promise((resolve, reject) => {
       connection.query(
-        'SELECT * FROM room_chat WHERE ?',
-        condition,
+        `SELECT * FROM room_chat JOIN user ON room_chat.friend_id = user.user_id WHERE room_chat.user_id = ${id}`,
         (error, result) => {
           console.log(result)
           !error ? resolve(result) : reject(new Error(result))

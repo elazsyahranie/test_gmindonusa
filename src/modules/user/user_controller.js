@@ -1,6 +1,5 @@
 /* eslint-disable no-unneeded-ternary */
 const helper = require('../../helpers/wrapper')
-// const helperUser = require('../../helpers/wrapperUser')
 const bcrypt = require('bcrypt')
 const redis = require('redis')
 const client = redis.createClient()
@@ -175,6 +174,82 @@ module.exports = {
         )
       } else {
         return helper.response(res, 200, `Data By Id ${id} Not Found !`, null)
+      }
+    } catch (error) {
+      console.log(error)
+      return helper.response(res, 400, 'Bad Request', error)
+    }
+  },
+  createRoom: async (req, res) => {
+    try {
+      const { userId, friendId } = req.body
+      const generateNumber = Math.floor(Math.random() * 20)
+      const multiplyIDNumbers = userId * friendId
+      const roomChat = generateNumber + multiplyIDNumbers
+      console.log(generateNumber)
+      console.log(multiplyIDNumbers)
+      console.log(`${generateNumber} + ${multiplyIDNumbers} = ${roomChat}`)
+      const setData = {
+        room_chat: roomChat,
+        user_id: userId,
+        friend_id: friendId
+      }
+      const setData2 = {
+        room_chat: roomChat,
+        user_id: friendId,
+        friend_id: userId
+      }
+      const result = await userModel.insertRoom(setData)
+      const result2 = await userModel.insertRoom(setData2)
+      return helper.response(
+        res,
+        200,
+        'Successfuly make room chat!',
+        result,
+        result2
+      )
+    } catch (error) {
+      console.log(error)
+      return helper.response(res, 400, 'Bad Request', error)
+    }
+  },
+  addFriend: async (req, res) => {
+    try {
+      const { contactUserId, contactFriendId } = req.body
+      const setData = {
+        contact_user_id: contactUserId,
+        contact_friend_id: contactFriendId
+      }
+      const result = await userModel.addContact(setData)
+      if (result) {
+        const generateNumber = Math.floor(Math.random() * 20)
+        const multiplyIDNumbers = contactUserId * contactFriendId
+        const roomChat = generateNumber + multiplyIDNumbers
+        console.log(generateNumber)
+        console.log(multiplyIDNumbers)
+        console.log(`${generateNumber} + ${multiplyIDNumbers} = ${roomChat}`)
+        const setRoomData = {
+          room_chat: roomChat,
+          user_id: contactUserId,
+          friend_id: contactFriendId
+        }
+        const setRoomData2 = {
+          room_chat: roomChat,
+          user_id: contactFriendId,
+          friend_id: contactUserId
+        }
+        const resultRoom = await userModel.insertRoom(setRoomData)
+        const resultRoom2 = await userModel.insertRoom(setRoomData2)
+        return helper.response(
+          res,
+          200,
+          'Succesuly add friend',
+          result,
+          resultRoom,
+          resultRoom2
+        )
+      } else {
+        return helper.response(res, 400, "There's something's wrong!")
       }
     } catch (error) {
       console.log(error)

@@ -108,9 +108,20 @@ module.exports = {
         user_id: userId,
         friend_id: friendId
       }
-      // Jangan buat dua room (dua model) sekaligus di sini
+      const setData2 = {
+        room_chat: roomChat,
+        user_id: friendId,
+        friend_id: userId
+      }
       const result = await userModel.insertRoom(setData)
-      return helper.response(res, 200, 'Successfuly make room chat!', result)
+      const result2 = await userModel.insertRoom(setData2)
+      return helper.response(
+        res,
+        200,
+        'Successfuly make room chat!',
+        result,
+        result2
+      )
     } catch (error) {
       console.log(error)
       return helper.response(res, 400, 'Bad Request', error)
@@ -141,26 +152,7 @@ module.exports = {
         console.log(generateNumber)
         console.log(multiplyIDNumbers)
         console.log(`${generateNumber} + ${multiplyIDNumbers} = ${roomChat}`)
-        const setRoomData = {
-          room_chat: roomChat,
-          user_id: contactUserId,
-          friend_id: contactFriendId
-        }
-        const setRoomData2 = {
-          room_chat: roomChat,
-          user_id: contactFriendId,
-          friend_id: contactUserId
-        }
-        const resultRoom = await userModel.insertRoom(setRoomData)
-        const resultRoom2 = await userModel.insertRoom(setRoomData2)
-        return helper.response(
-          res,
-          200,
-          'Succesuly add friend',
-          result,
-          resultRoom,
-          resultRoom2
-        )
+        return helper.response(res, 200, 'Succesuly add friend', result)
       } else {
         return helper.response(res, 400, "There's something's wrong!")
       }

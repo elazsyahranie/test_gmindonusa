@@ -194,20 +194,9 @@ module.exports = {
         user_id: userId,
         friend_id: friendId
       }
-      const setData2 = {
-        room_chat: roomChat,
-        user_id: friendId,
-        friend_id: userId
-      }
+      // Jangan buat dua room (dua model) sekaligus di sini
       const result = await userModel.insertRoom(setData)
-      const result2 = await userModel.insertRoom(setData2)
-      return helper.response(
-        res,
-        200,
-        'Successfuly make room chat!',
-        result,
-        result2
-      )
+      return helper.response(res, 200, 'Successfuly make room chat!', result)
     } catch (error) {
       console.log(error)
       return helper.response(res, 400, 'Bad Request', error)

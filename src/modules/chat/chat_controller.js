@@ -20,11 +20,8 @@ module.exports = {
   },
   getMessages: async (req, res) => {
     try {
-      const { roomChat } = req.body
-      const condition = {
-        room_chat: roomChat
-      }
-      const result = await chatModel.getChatRecords(condition)
+      const { room } = req.params
+      const result = await chatModel.getChatRecords(room)
       return helper.response(res, 200, 'Get messages success!', result)
     } catch (error) {
       console.log(error)

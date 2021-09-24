@@ -33,8 +33,18 @@ const io = socket(server, {
   },
   path: '/backend3/socket.io'
 })
+
+const listUsersOnline = []
+
 io.on('connection', (socket) => {
   console.log('Socket.io connect !')
+
+  socket.on('connection-server', (userId) => {
+    listUsersOnline.push(userId)
+    console.log(userId)
+    io.emit('list-users-online', listUsersOnline)
+  })
+
   // Global Message -- Dikirim ke semua client, dan termasuk pengirim
   socket.on('globalMessage', (data) => {
     console.log(data)

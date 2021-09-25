@@ -43,6 +43,11 @@ io.on('connection', (socket) => {
     listUsersOnline.push(userId)
     console.log(userId)
     io.emit('list-users-online', listUsersOnline)
+    socket.join(userId)
+  })
+
+  socket.on('disconnect-server', (userId) => {
+    socket.leave(userId)
   })
 
   // Global Message -- Dikirim ke semua client, dan termasuk pengirim
@@ -74,6 +79,9 @@ io.on('connection', (socket) => {
   })
   socket.on('roomMessage', (data) => {
     io.to(data.room).emit('chatMessage', data)
+  })
+  socket.on('notif-message', (data) => {
+    socket.broadcast.to(data.receiverId).emit('message-notif', data)
   })
   // Harus sama dengan di Frontend. 'globalMessage' ya 'globalMessage'
 })

@@ -200,11 +200,12 @@ module.exports = {
   updateUser: async (req, res) => {
     try {
       const { id } = req.params
-      const { userEmail, userPhone, userName } = req.body
+      const { userName, userEmail, userPhone, userBio } = req.body
       const setData = {
+        user_name: userName,
         user_email: userEmail,
         user_phone: userPhone,
-        user_name: userName
+        user_bio: userBio
       }
       console.log(setData)
       const result = await userModel.updateData(setData, id)
@@ -251,7 +252,11 @@ module.exports = {
             result
           )
         } else {
-          return helper.response(res, 400, 'Wrong password')
+          return helper.response(
+            res,
+            400,
+            'You entered the previous password wrong!'
+          )
         }
       }
     } catch (error) {

@@ -34,20 +34,29 @@ const io = socket(server, {
   path: '/backend3/socket.io'
 })
 
-const listUsersOnline = []
+// const listUsers = []
+let listUsersOnline = []
 
 io.on('connection', (socket) => {
   console.log('Socket.io connect !')
 
-  socket.on('connection-server', (userId) => {
-    listUsersOnline.push(userId)
+  socket.on('connect-server', (userId) => {
+    if (!listUsersOnline.includes(userId)) {
+      listUsersOnline.push(userId)
+      // listUsers.push(userId)
+    }
+    console.log('Connect server')
     console.log(userId)
     io.emit('list-users-online', listUsersOnline)
     socket.join(userId)
   })
 
-  socket.on('disconnect-server', (userId) => {
-    socket.leave(userId)
+  socket.on('disconnect-server', ({ userId }) => {
+    listUsersOnline = listUsersOnline.filter(
+      (element) => element.userId !== userId
+    )
+    io.emit('list-users-online', listUsersOnline)
+    // socket.leave(userId)
   })
 
   // Global Message -- Dikirim ke semua client, dan termasuk pengirim

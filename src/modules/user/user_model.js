@@ -50,7 +50,6 @@ module.exports = {
       connection.query(
         `SELECT * FROM contact WHERE contact_user_id = ${idOne} AND contact_friend_id = ${idTwo}`,
         (error, result) => {
-          console.log(result)
           !error ? resolve(result) : reject(new Error(result))
         }
       )
@@ -62,7 +61,6 @@ module.exports = {
       connection.query(
         `SELECT * FROM room_chat JOIN user ON room_chat.friend_id = user.user_id WHERE room_chat.user_id = ${id}`,
         (error, result) => {
-          console.log(result)
           !error ? resolve(result) : reject(new Error(result))
         }
       )

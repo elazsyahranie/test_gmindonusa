@@ -76,7 +76,7 @@ io.on('connection', (socket) => {
   })
   // Room Message
   socket.on('joinRoom', (data) => {
-    console.log(data)
+    // console.log(data)
     if (data.previousRoom) {
       socket.leave(data.previousRoom)
     }
@@ -89,8 +89,11 @@ io.on('connection', (socket) => {
   socket.on('roomMessage', (data) => {
     io.to(data.room).emit('chatMessage', data)
   })
+
   socket.on('notif-message', (data) => {
-    socket.broadcast.to(data.receiverId).emit('message-notif', data)
+    console.log('Supposed notif data')
+    console.log(data)
+    socket.broadcast.to(data.receiverId).emit('notif-message', data)
   })
   // Harus sama dengan di Frontend. 'globalMessage' ya 'globalMessage'
 })

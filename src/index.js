@@ -43,18 +43,19 @@ io.on('connection', (socket) => {
   socket.on('connect-server', (userId) => {
     if (!listUsersOnline.includes(userId)) {
       listUsersOnline.push(userId)
+      // console.log(userId)
+      // console.log(typeof userId)
       // listUsers.push(userId)
     }
     console.log('Connect server')
-    console.log(userId)
     io.emit('list-users-online', listUsersOnline)
     socket.join(userId)
   })
 
   socket.on('disconnect-server', ({ userId }) => {
-    listUsersOnline = listUsersOnline.filter(
-      (element) => element.userId !== userId
-    )
+    console.log(userId)
+    console.log(listUsersOnline)
+    listUsersOnline = listUsersOnline.filter((element) => element !== userId)
     io.emit('list-users-online', listUsersOnline)
     // socket.leave(userId)
   })

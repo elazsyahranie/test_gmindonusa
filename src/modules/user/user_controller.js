@@ -1,5 +1,6 @@
 /* eslint-disable no-unneeded-ternary */
 const helper = require('../../helpers/wrapper')
+const helperUser = require('../../helpers/wrapperUser')
 const bcrypt = require('bcrypt')
 const redis = require('redis')
 const client = redis.createClient()
@@ -38,8 +39,12 @@ module.exports = {
     try {
       const { id } = req.params
       const result = await userModel.getDataByCondition({ user_id: id })
-      client.setex(`getuser:${id}`, 3600, JSON.stringify(result))
-      return helper.response(res, 200, `Success get data by ID ${id}`, result)
+      return helperUser.response(
+        res,
+        200,
+        `Success get data by ID ${id}`,
+        result[0]
+      )
     } catch (error) {
       console.log(error)
       return helper.response(res, 400, 'Bad Request', error)

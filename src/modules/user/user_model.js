@@ -157,6 +157,7 @@ module.exports = {
               id: id,
               ...setData
             }
+            console.log(newResult)
             resolve(newResult)
           } else {
             reject(new Error(error))

@@ -7,7 +7,7 @@ module.exports = {
   getUserByIdRedis: (req, res, next) => {
     const { id } = req.params
     if (id) {
-      client.get(`getuserid:${id}`, (error, result) => {
+      client.get(`getuser:${id}`, (error, result) => {
         if (!error && result != null) {
           console.log('data ada di dalam redis')
           return helper.response(
@@ -63,6 +63,17 @@ module.exports = {
   },
   clearDataUserRedis: (req, res, next) => {
     client.keys('getuser*', (_error, result) => {
+      console.log('isi key dalam redis', result)
+      if (result.length > 0) {
+        result.forEach((item) => {
+          client.del(item)
+        })
+      }
+      next()
+    })
+  },
+  clearDataContactsRedis: (req, res, next) => {
+    client.keys('getcontacts*', (_error, result) => {
       console.log('isi key dalam redis', result)
       if (result.length > 0) {
         result.forEach((item) => {

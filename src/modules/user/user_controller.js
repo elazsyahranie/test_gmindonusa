@@ -34,25 +34,14 @@ module.exports = {
       return helper.response(res, 400, 'Bad Request', error)
     }
   },
-  getAllUsernameAscending: async (req, res) => {
+  getUserbyId: async (req, res) => {
     try {
-      let { page, limit } = req.query
-      page = parseInt(page)
-      limit = parseInt(limit)
-      const totalData = await userModel.getDataCount()
-      console.log('Total Data: ' + totalData)
-      const totalPage = Math.ceil(totalData / limit)
-      console.log('Total Page: ' + totalPage)
-      const offset = page * limit - limit
-      const pageInfo = {
-        page,
-        totalPage,
-        limit,
-        totalData
-      }
-      const result = await userModel.getDataAllAscending(limit, offset)
-      return helper.response(res, 200, 'Success Get Data', result, pageInfo)
+      const { id } = req.params
+      const result = await userModel.getDataByCondition({ user_id: id })
+      client.setex(`getuser:${id}`, 3600, JSON.stringify(result))
+      return helper.response(res, 200, `Success get data by ID ${id}`, result)
     } catch (error) {
+      console.log(error)
       return helper.response(res, 400, 'Bad Request', error)
     }
   },
@@ -166,7 +155,7 @@ module.exports = {
       const { id } = req.params
       const result = await userModel.getContactData({ contact_user_id: id })
       if (result.length > 0) {
-        client.set(`getuserid:${id}`, JSON.stringify(result))
+        client.setex(`getcontacts:${id}`, 3600, JSON.stringify(result))
         return helper.response(res, 200, 'Succes get contacts data', result)
       } else {
         return helper.response(res, 404, 'Contacts data not found!', result)

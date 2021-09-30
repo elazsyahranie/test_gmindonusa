@@ -12,17 +12,6 @@ module.exports = {
       )
     })
   },
-  getDataAllAscending: (limit, offset) => {
-    return new Promise((resolve, reject) => {
-      connection.query(
-        'SELECT * FROM user WHERE user_name LIMIT ? OFFSET ?',
-        [limit, offset],
-        (error, result) => {
-          !error ? resolve(result) : reject(new Error(error))
-        }
-      )
-    })
-  },
   getDataCount: () => {
     return new Promise((resolve, reject) => {
       connection.query(

@@ -82,10 +82,10 @@ io.on('connection', (socket) => {
       socket.leave(data.previousRoom)
     }
     socket.join(data.room)
-    socket.broadcast.to(data.room).emit('chatMessage', {
-      user_name: 'BOT',
-      message: `${data.user_name} joined chat!`
-    })
+    // socket.broadcast.to(data.room).emit('chatMessage', {
+    //   user_name: 'BOT',
+    //   message: `${data.user_name} joined chat!`
+    // })
   })
   socket.on('roomMessage', (data) => {
     io.to(data.room).emit('chatMessage', data)

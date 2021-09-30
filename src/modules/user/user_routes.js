@@ -23,7 +23,6 @@ const {
   updateUser,
   updateUserPassword,
   updateUserImage,
-  updatePin,
   deleteUser
 } = require('./user_controller')
 
@@ -59,12 +58,6 @@ Route.patch(
   clearDataContactsRedis,
   uploads,
   updateUserImage
-)
-Route.patch(
-  '/update-pin/:id',
-  clearDataUserRedis,
-  clearDataContactsRedis,
-  updatePin
 )
 Route.delete('/:id', clearDataUserRedis, clearDataContactsRedis, deleteUser)
 module.exports = Route

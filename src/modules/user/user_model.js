@@ -12,16 +12,6 @@ module.exports = {
       )
     })
   },
-  getDataCount: () => {
-    return new Promise((resolve, reject) => {
-      connection.query(
-        'SELECT COUNT(*) AS total FROM user',
-        (error, result) => {
-          !error ? resolve(result[0].total) : reject(new Error(error))
-        }
-      )
-    })
-  },
   getUserSearchKeyword: (keyword, limit, offset) => {
     return new Promise((resolve, reject) => {
       connection.query(
@@ -111,6 +101,28 @@ module.exports = {
         'SELECT * FROM contact INNER JOIN user ON contact.contact_friend_id = user.user_id WHERE ?',
         condition,
         (error, result) => {
+          !error ? resolve(result) : reject(new Error(error))
+        }
+      )
+    })
+  },
+  getDataCount: () => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        'SELECT COUNT(*) AS total FROM user',
+        (error, result) => {
+          !error ? resolve(result[0].total) : reject(new Error(error))
+        }
+      )
+    })
+  },
+  getContactDataPagination: (limit, offset, sort, search) => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        `SELECT * FROM contact INNER JOIN user ON contact.contact_friend_id = user.user_id WHERE user_name LIKE '%${search}%' ORDER BY ${sort} LIMIT ? OFFSET ?`,
+        [limit, offset],
+        (error, result) => {
+          console.log(error)
           !error ? resolve(result) : reject(new Error(error))
         }
       )

@@ -17,6 +17,7 @@ const {
   getUserbyId,
   getContacts,
   addFriend,
+  getContactPagination,
   createRoom,
   getRoomList,
   changeUserVerification,
@@ -37,6 +38,7 @@ Route.post(
   clearDataContactsRedis,
   addFriend
 )
+Route.get('/contact-pagination/:id', authentication, getContactPagination)
 Route.post(
   '/create-room',
   clearDataUserRedis,

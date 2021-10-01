@@ -169,6 +169,44 @@ module.exports = {
       return helper.response(res, 400, 'Bad Request', error)
     }
   },
+  getContactPagination: async (req, res) => {
+    try {
+      let { page, limit, sort, search } = req.query
+
+      page = page ? parseInt(page) : 1
+      limit = limit ? parseInt(limit) : 5
+      sort = sort ? sort : 'movie_id ASC'
+      search = search ? search : ''
+
+      const totalData = await userModel.getDataCount(search)
+      const totalPage = Math.ceil(totalData / limit)
+      const offset = page * limit - limit
+      const pageInfo = {
+        page,
+        totalPage,
+        limit,
+        totalData
+      }
+
+      const result = await userModel.getContactDataPagination(
+        limit,
+        offset,
+        sort,
+        search
+      )
+      console.log(limit, offset)
+      return helper.response(
+        res,
+        200,
+        'Success Get Contact With Pagination',
+        result,
+        pageInfo
+      )
+    } catch (error) {
+      console.log(error)
+      return helper.response(res, 400, 'Bad Request', error)
+    }
+  },
   updateUser: async (req, res) => {
     try {
       const { id } = req.params

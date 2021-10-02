@@ -171,11 +171,11 @@ module.exports = {
   },
   getContactPagination: async (req, res) => {
     try {
-      let { page, limit, sort, search } = req.query
+      let { id, page, limit, sort, search } = req.query
 
       page = page ? parseInt(page) : 1
       limit = limit ? parseInt(limit) : 5
-      sort = sort ? sort : 'movie_id ASC'
+      sort = sort ? sort : 'contact.contact_user_id ASC'
       search = search ? search : ''
 
       const totalData = await userModel.getDataCount(search)
@@ -189,6 +189,7 @@ module.exports = {
       }
 
       const result = await userModel.getContactDataPagination(
+        id,
         limit,
         offset,
         sort,

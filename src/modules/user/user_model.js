@@ -116,10 +116,10 @@ module.exports = {
       )
     })
   },
-  getContactDataPagination: (limit, offset, sort, search) => {
+  getContactDataPagination: (id, limit, offset, sort) => {
     return new Promise((resolve, reject) => {
       connection.query(
-        `SELECT * FROM contact INNER JOIN user ON contact.contact_friend_id = user.user_id WHERE user_name LIKE '%${search}%' ORDER BY ${sort} LIMIT ? OFFSET ?`,
+        `SELECT * FROM contact INNER JOIN user ON contact.contact_friend_id = user.user_id WHERE contact_user_id = ${id} ORDER BY ${sort} LIMIT ? OFFSET ?`,
         [limit, offset],
         (error, result) => {
           console.log(error)

@@ -34,6 +34,7 @@ module.exports = {
       const salt = bcrypt.genSaltSync(10)
       const encryptPassword = bcrypt.hashSync(userPassword, salt)
       const setData = {
+        user_verification: '1',
         user_name: userName,
         user_email: userEmail,
         user_password: encryptPassword

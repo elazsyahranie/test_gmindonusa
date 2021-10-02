@@ -45,6 +45,37 @@ module.exports = {
       )
     })
   },
+  sendInvitation: (data) => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        'INSERT INTO friend_request SET ?',
+        data,
+        (error, result) => {
+          console.log(error)
+          if (!error) {
+            const newResult = {
+              id: result.insertId,
+              ...data
+            }
+            resolve(newResult)
+          } else {
+            reject(new Error(error))
+          }
+        }
+      )
+    })
+  },
+  // DELETE FROM friend_request WHERE contact_user_id = 33 AND contact_friend_id = 69
+  eraseRequest: (userId, friendId) => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        `DELETE FROM friend_request WHERE contact_user_id = ${userId} AND contact_friend_id = ${friendId}`,
+        (error, result) => {
+          !error ? resolve(result) : reject(new Error(error))
+        }
+      )
+    })
+  },
   addContact: (data) => {
     return new Promise((resolve, reject) => {
       connection.query('INSERT INTO contact SET ?', data, (error, result) => {

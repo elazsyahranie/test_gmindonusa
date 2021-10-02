@@ -131,7 +131,21 @@ module.exports = {
       return helper.response(res, 400, 'Bad request', error)
     }
   },
-  addFriend: async (req, res) => {
+  sendFriendRequest: async (req, res) => {
+    try {
+      const { contactUserId, contactFriendId } = req.body
+      const setData = {
+        contact_user_id: contactUserId,
+        contact_friend_id: contactFriendId
+      }
+      const result = await userModel.sendInvitation(setData)
+      return helper.response(res, 200, 'Friend request sent!', result)
+    } catch (error) {
+      console.log(error)
+      return helper.response(res, 400, 'Bad request', error)
+    }
+  },
+  confirmFriendRequest: async (req, res) => {
     try {
       const { contactUserId, contactFriendId } = req.body
       const setData = {
@@ -139,17 +153,17 @@ module.exports = {
         contact_friend_id: contactFriendId
       }
       const result = await userModel.addContact(setData)
-      if (result) {
-        const generateNumber = Math.floor(Math.random() * 20)
-        const multiplyIDNumbers = contactUserId * contactFriendId
-        const roomChat = generateNumber + multiplyIDNumbers
-        console.log(generateNumber)
-        console.log(multiplyIDNumbers)
-        console.log(`${generateNumber} + ${multiplyIDNumbers} = ${roomChat}`)
-        return helper.response(res, 200, 'Succesuly add friend', result)
-      } else {
-        return helper.response(res, 400, "There's something's wrong!")
-      }
+      const removeRequest = await userModel.eraseRequest(
+        contactUserId,
+        contactFriendId
+      )
+      return helper.response(
+        res,
+        200,
+        'You are now friends!',
+        result,
+        removeRequest
+      )
     } catch (error) {
       console.log(error)
       return helper.response(res, 400, 'Bad Request', error)

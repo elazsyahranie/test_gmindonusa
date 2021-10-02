@@ -16,7 +16,8 @@ const {
   getUsernameSearchKeyword,
   getUserbyId,
   getContacts,
-  addFriend,
+  sendFriendRequest,
+  confirmFriendRequest,
   getContactPagination,
   createRoom,
   getRoomList,
@@ -30,14 +31,20 @@ const {
 Route.get('/', authentication, getAllUser)
 Route.get('/keyword', getUserSearchKeywordRedis, getUsernameSearchKeyword)
 Route.get('/:id', authentication, getUserByIdRedis, getUserbyId)
-Route.get('/contacts/:id', getContactsRedis, getContacts)
 Route.post(
-  '/add-friend',
+  '/send-friend-request',
+  authentication,
+  clearDataContactsRedis,
+  sendFriendRequest
+)
+Route.post(
+  '/confirm-friend-request',
   authentication,
   clearDataUserRedis,
   clearDataContactsRedis,
-  addFriend
+  confirmFriendRequest
 )
+Route.get('/contacts/:id', authentication, getContactsRedis, getContacts)
 Route.get('/contact-pagination/:id', authentication, getContactPagination)
 Route.post(
   '/create-room',

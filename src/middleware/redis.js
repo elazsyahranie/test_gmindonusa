@@ -42,6 +42,25 @@ module.exports = {
       })
     }
   },
+  getContactPaginationRedis: (req, res, next) => {
+    const { id } = req.params
+    if (id) {
+      client.get(`getcontactspagiantion:${id}`, (error, result) => {
+        if (!error && result != null) {
+          console.log(`data contact-by-pagination id ${id} di dalam redis`)
+          return helper.response(
+            res,
+            200,
+            `Success get contacts (with pagination) by Id ${id} (Redis)`,
+            JSON.parse(result)
+          )
+        } else {
+          console.log('Data tidak ada dalam redis')
+          next()
+        }
+      })
+    }
+  },
   getUserSearchKeywordRedis: (req, res, next) => {
     const { keyword } = req.query
     if (keyword) {

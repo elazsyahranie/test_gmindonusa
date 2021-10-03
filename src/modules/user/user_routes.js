@@ -7,6 +7,7 @@ const {
   getUserByIdRedis,
   getUserSearchKeywordRedis,
   getContactsRedis,
+  getContactsDataOnlyRedis,
   clearDataUserRedis,
   clearDataContactsRedis
 } = require('../../middleware/redis')
@@ -16,6 +17,7 @@ const {
   getUsernameSearchKeyword,
   getUserbyId,
   getContacts,
+  getContactsWithoutUserData,
   sendFriendRequest,
   confirmFriendRequest,
   getContactPagination,
@@ -50,6 +52,12 @@ Route.post(
   confirmFriendRequest
 )
 Route.get('/contact/:id', authentication, getContactsRedis, getContacts)
+Route.get(
+  '/contact-data-only/:id',
+  authentication,
+  getContactsDataOnlyRedis,
+  getContactsWithoutUserData
+)
 Route.get('/contact-pagination/:id', authentication, getContactPagination)
 Route.post(
   '/create-room',

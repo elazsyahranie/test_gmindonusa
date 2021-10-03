@@ -65,7 +65,7 @@ module.exports = {
           result
         )
       } else {
-        return helper.response(res, 404, 'Oops! No user with that name')
+        return helper.response(res, 404, 'Oops! No user with that name!')
       }
     } catch (error) {
       console.log(error)
@@ -164,6 +164,26 @@ module.exports = {
         return helper.response(res, 404, 'Contacts data not found!', result)
       }
     } catch (error) {
+      return helper.response(res, 400, 'Bad Request', error)
+    }
+  },
+  getContactsWithoutUserData: async (req, res) => {
+    try {
+      const { id } = req.params
+      const result = await userModel.getContactDataOnly(id)
+      if (result.length > 0) {
+        client.setex(`getcontactsdataonly:${id}`, 3600, JSON.stringify(result))
+        return helper.response(
+          res,
+          200,
+          `Success get contacts (data only) by ID = ${id}`,
+          result
+        )
+      } else {
+        return helper.response(res, 404, 'Contacts data not found!', result)
+      }
+    } catch (error) {
+      console.log(error)
       return helper.response(res, 400, 'Bad Request', error)
     }
   },

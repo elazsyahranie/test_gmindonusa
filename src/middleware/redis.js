@@ -42,6 +42,24 @@ module.exports = {
       })
     }
   },
+  getContactsDataOnlyRedis: (req, res, next) => {
+    const { id } = req.params
+    if (id) {
+      client.get(`getcontactsdataonly:${id}`, (error, result) => {
+        if (!error && result != null) {
+          console.log('data ada di dalam redis')
+          return helper.response(
+            res,
+            200,
+            `Success get contacts (data only) by ${id} - Redis`
+          )
+        } else {
+          console.log('Data tidak ada dalam redis')
+          next()
+        }
+      })
+    }
+  },
   getContactPaginationRedis: (req, res, next) => {
     const { id } = req.params
     if (id) {

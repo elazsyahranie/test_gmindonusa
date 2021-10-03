@@ -136,6 +136,16 @@ module.exports = {
       )
     })
   },
+  getContactDataOnly: (id) => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        `SELECT * FROM contact WHERE contact.contact_user_id = ${id} OR contact_friend_id = ${id}`,
+        (error, result) => {
+          !error ? resolve(result) : reject(new Error(error))
+        }
+      )
+    })
+  },
   getDataCount: () => {
     return new Promise((resolve, reject) => {
       connection.query(

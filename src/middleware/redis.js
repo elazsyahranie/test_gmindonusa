@@ -51,7 +51,8 @@ module.exports = {
           return helper.response(
             res,
             200,
-            `Success get contacts (data only) by ${id} - Redis`
+            `Success get contacts (data only) by ${id} - Redis`,
+            JSON.parse(result)
           )
         } else {
           console.log('Data tidak ada dalam redis')

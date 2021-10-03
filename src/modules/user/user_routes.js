@@ -19,6 +19,7 @@ const {
   getContacts,
   getContactsWithoutUserData,
   sendFriendRequest,
+  getFriendRequestData,
   confirmFriendRequest,
   getContactPagination,
   createRoom,
@@ -43,6 +44,11 @@ Route.post(
   authentication,
   clearDataContactsRedis,
   sendFriendRequest
+)
+Route.get(
+  '/friend-request/:id',
+  authentication,
+  getFriendRequestData
 )
 Route.post(
   '/confirm-friend-request',

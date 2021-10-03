@@ -44,7 +44,7 @@ Route.post(
   clearDataContactsRedis,
   confirmFriendRequest
 )
-Route.get('/contacts/:id', authentication, getContactsRedis, getContacts)
+Route.get('/contact/:id', authentication, getContactsRedis, getContacts)
 Route.get('/contact-pagination/:id', authentication, getContactPagination)
 Route.post(
   '/create-room',

@@ -185,7 +185,8 @@ module.exports = {
   },
   getContactPagination: async (req, res) => {
     try {
-      let { id, page, limit, sort, search } = req.query
+      const { id } = req.params
+      let { page, limit, sort, search } = req.query
 
       page = page ? parseInt(page) : 1
       limit = limit ? parseInt(limit) : 5

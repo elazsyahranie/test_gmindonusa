@@ -210,7 +210,8 @@ module.exports = {
         sort,
         search
       )
-      console.log(limit, offset)
+      console.log(totalData)
+      console.log(limit)
       return helper.response(
         res,
         200,

@@ -53,36 +53,20 @@ module.exports = {
   getUsernameSearchKeyword: async (req, res) => {
     try {
       const { keyword } = req.query
-      let { page, limit, sort } = req.query
-
-      page = page ? parseInt(page) : 1
-      limit = limit ? parseInt(limit) : 5
-      sort = sort ? sort : 'user_name ASC'
-
-      const totalData = await userModel.getDataCount()
-      console.log('Total Data: ' + totalData)
-      const totalPage = Math.ceil(totalData / limit)
-      console.log('Total Page: ' + totalPage)
-      const offset = page * limit - limit
-      const pageInfo = {
-        page,
-        totalPage,
-        limit,
-        totalData
+      const result = await userModel.getUserSearchKeyword(keyword)
+      console.log(keyword)
+      console.log(typeof keyword)
+      console.log(result.length)
+      if (result.length > 0) {
+        return helper.response(
+          res,
+          200,
+          'Success Find Username By Keyword',
+          result
+        )
+      } else {
+        return helper.response(res, 404, 'Oops! No user with that name')
       }
-      const result = await userModel.getUserSearchKeyword(
-        keyword,
-        limit,
-        offset,
-        sort
-      )
-      return helper.response(
-        res,
-        200,
-        'Success Find Username By Keyword',
-        result,
-        pageInfo
-      )
     } catch (error) {
       console.log(error)
       return helper.response(res, 400, 'Bad Request', error)

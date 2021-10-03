@@ -29,7 +29,12 @@ const {
 } = require('./user_controller')
 
 Route.get('/', authentication, getAllUser)
-Route.get('/keyword', getUserSearchKeywordRedis, getUsernameSearchKeyword)
+Route.get(
+  '/keyword',
+  authentication,
+  getUserSearchKeywordRedis,
+  getUsernameSearchKeyword
+)
 Route.get('/:id', authentication, getUserByIdRedis, getUserbyId)
 Route.post(
   '/send-friend-request',

@@ -156,6 +156,8 @@ module.exports = {
       )
     })
   },
+  // Select A.column, B.column FROM TABLE1 A INNER JOIN TABLE2 B ON A.Id = (case when (your condition) then b.Id else (something) END)
+  // SELECT * FROM contact INNER JOIN user ON contact.contact_friend_id = user.user_id AND contact.contact_friend_id = user.user_id WHERE contact_friend_id = 33 AND contact_user_id = 33;
   getContactDataPagination: (id, limit, offset, sort) => {
     return new Promise((resolve, reject) => {
       connection.query(

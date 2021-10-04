@@ -145,6 +145,22 @@ module.exports = {
       return helper.response(res, 400, 'Bad Request', error)
     }
   },
+  getPendingRequestData: async (req, res) => {
+    try {
+      const { id } = req.params
+      const result = await userModel.getPendingRequest({
+        contact_friend_id: id
+      })
+      if (result) {
+        return helper.response(res, 200, 'Pending request available', result)
+      } else {
+        return helper.response(res, 404, 'No pending friend request', result)
+      }
+    } catch (error) {
+      console.log(error)
+      return helper.response(res, 400, 'Bad Request', error)
+    }
+  },
   confirmFriendRequest: async (req, res) => {
     try {
       const { contactUserId, contactFriendId } = req.body

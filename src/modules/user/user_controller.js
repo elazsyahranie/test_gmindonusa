@@ -8,6 +8,10 @@ const client = redis.createClient({
   port: process.env.REDIS_PORT,
   password: process.env.REDIS_PASSWORD
 })
+client.on('connect', () => {
+  console.log('Connected to our redis instance!')
+  client.set('Greatest Basketball Player', 'Lebron James')
+})
 const userModel = require('./user_model')
 require('dotenv').config()
 const jwt = require('jsonwebtoken')

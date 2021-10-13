@@ -106,7 +106,7 @@ module.exports = {
           delete payload.user_password
           delete payload.user_pin
           const token = jwt.sign({ ...payload }, process.env.PRIVATE_KEY, {
-            expiresIn: '24h'
+            expiresIn: '25s'
           })
 
           const result = { ...payload, token }

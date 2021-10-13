@@ -171,13 +171,16 @@ module.exports = {
         setData = token.setData
       }
       if (userId && setData) {
-        const result = await authModel.updateData(setData, userId)
-        return helper.response(
-          res,
-          200,
-          'succes update data',
-          Object.keys(result)
-        )
+        console.log(userId)
+        console.log(setData)
+        console.log('Trying!!')
+        // const result = await authModel.updateData(setData, userId)
+        // return helper.response(
+        //   res,
+        //   200,
+        //   'succes update data',
+        //   Object.keys(result)
+        // )
       } else {
         console.log('The Bad Request was from the Email')
         return helper.response(res, 400, 'Bad Request', null)

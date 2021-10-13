@@ -71,7 +71,13 @@ Route.post(
 )
 Route.get('/get-room-list/:id', authentication, getRoomList)
 Route.get('/verify-user/:token', changeUserVerification)
-Route.patch('/:id', clearDataUserRedis, clearDataContactsRedis, updateUser)
+Route.patch(
+  '/:id',
+  authentication,
+  clearDataUserRedis,
+  clearDataContactsRedis,
+  updateUser
+)
 Route.patch(
   '/update-password/:id',
   clearDataUserRedis,

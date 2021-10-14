@@ -119,6 +119,7 @@ module.exports = {
           )
           // Memasukkan data checkUserEmail ke dalam refreshToken
           dataRefreshToken[checkUserEmail[0]] = refreshToken
+          console.log('Refresh Token!')
           console.log(dataRefreshToken)
           const result = { ...payload, token, refreshToken }
           return helper.response(res, 200, 'Succes Login !', result)

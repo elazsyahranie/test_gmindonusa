@@ -108,8 +108,14 @@ module.exports = {
           const token = jwt.sign({ ...payload }, process.env.PRIVATE_KEY, {
             expiresIn: '24h'
           })
-
-          const result = { ...payload, token }
+          const refreshToken = jwt.sign(
+            { ...payload },
+            process.env.PRIVATE_KEY,
+            {
+              expiresIn: '24h'
+            }
+          )
+          const result = { ...payload, token, refreshToken }
           return helper.response(res, 200, 'Succes Login !', result)
         } else {
           return helper.response(res, 400, 'Password incorrect')

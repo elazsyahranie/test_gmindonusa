@@ -8,6 +8,7 @@ const {
   getAllUser,
   register,
   login,
+  refresh,
   changeUserVerification,
   updateUser,
   deleteUser
@@ -15,6 +16,7 @@ const {
 
 Route.get('/', getAllUser)
 Route.post('/register', register)
+Route.post('/refresh', refresh)
 Route.post('/login', login)
 Route.get('/verify-user/:token', changeUserVerification)
 Route.patch('/:id', updateUser)

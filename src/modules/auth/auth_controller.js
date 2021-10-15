@@ -134,6 +134,13 @@ module.exports = {
       return helper.response(res, 400, 'Bad Request', error)
     }
   },
+  refresh: async (req, res) => {
+    try {
+      console.log(req.body)
+    } catch (error) {
+      return helper.response(res, 400, 'Bad Request', error)
+    }
+  },
   updateUser: async (req, res) => {
     try {
       const { id } = req.params

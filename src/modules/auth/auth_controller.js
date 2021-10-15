@@ -4,7 +4,7 @@ const authModel = require('./auth_model')
 require('dotenv').config()
 const jwt = require('jsonwebtoken')
 
-let dataRefreshToken = {}
+const dataRefreshToken = {}
 
 module.exports = {
   getAllUser: async (req, res) => {

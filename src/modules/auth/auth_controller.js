@@ -108,7 +108,7 @@ module.exports = {
           delete payload.user_password
           delete payload.user_pin
           const token = jwt.sign({ ...payload }, process.env.PRIVATE_KEY, {
-            expiresIn: '24h'
+            expiresIn: '20s'
           })
           const refreshToken = jwt.sign(
             { ...payload },

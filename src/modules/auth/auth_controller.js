@@ -136,7 +136,7 @@ module.exports = {
   },
   refresh: async (req, res) => {
     try {
-      console.log(req)
+      console.log(req.body)
       console.log(req.body)
     } catch (error) {
       return helper.response(res, 400, 'Bad Request', error)

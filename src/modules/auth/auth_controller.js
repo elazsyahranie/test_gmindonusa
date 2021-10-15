@@ -151,6 +151,7 @@ module.exports = {
             (error && error.name === 'TokenExpiredError')
           ) {
             // Jika refreshToken tidak bisa dipakai lagi
+            delete dataRefreshToken.userId
             return helper.response(res, 403, error.message)
           } else {
             // Jika refreshToken masih bisa dipakai

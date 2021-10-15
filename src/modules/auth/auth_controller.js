@@ -139,20 +139,25 @@ module.exports = {
       const { userId, refreshToken } = req.body
       console.log(req.body)
       console.log(req.body)
+      // Jika userId pada dataRefreshToken
       if (
         userId in dataRefreshToken &&
         dataRefreshToken[userId] === refreshToken
       ) {
+        // Apa refreshToken masih bisa dipakai?
         jwt.verify(refreshToken, process.env.PRIVATE_KEY, (error, result) => {
           if (
             (error && error.name === 'JsonWebTokenError') ||
             (error && error.name === 'TokenExpiredError')
           ) {
-            console.log('GAGAL!')
+            // Jika refreshToken tidak bisa dipakai lagi
+            return helper.response(res, 403, error.message)
           } else {
-            console.log('BERHASIL')
+            // Jika refreshToken masih bisa dipakai
+            console.log(result)
           }
         })
+        // Jika userId TIDAK ADA pada dataRefreshToken
       } else {
         return helper.response(res, 403, 'Wrong refresh token')
       }

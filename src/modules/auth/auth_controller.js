@@ -154,7 +154,18 @@ module.exports = {
             return helper.response(res, 403, error.message)
           } else {
             // Jika refreshToken masih bisa dipakai
-            console.log(result)
+            delete result.iat
+            delete result.exp
+            const token = jwt.sign(result, process.env.PRIVATE_KEY, {
+              expiresIn: '20s'
+            })
+            const newResult = { result, token, refreshToken }
+            return helper.response(
+              res,
+              200,
+              'Refresh token succesful',
+              newResult
+            )
           }
         })
         // Jika userId TIDAK ADA pada dataRefreshToken

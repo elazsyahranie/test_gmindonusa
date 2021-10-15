@@ -154,7 +154,7 @@ module.exports = {
           }
         })
       } else {
-        return helper.response(res, 403, 'Wrong refresh token', error)
+        return helper.response(res, 403, 'Wrong refresh token')
       }
     } catch (error) {
       return helper.response(res, 400, 'Bad Request', error)

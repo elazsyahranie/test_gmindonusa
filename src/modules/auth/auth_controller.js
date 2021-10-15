@@ -119,9 +119,6 @@ module.exports = {
           )
           // Memasukkan data checkUserEmail ke dalam refreshToken
           dataRefreshToken[checkUserEmail[0].user_id] = refreshToken
-          console.log('Refresh the Token!')
-          console.log(checkUserEmail)
-          console.log(dataRefreshToken)
           const result = { ...payload, token, refreshToken }
           return helper.response(res, 200, 'Succes Login !', result)
         } else {
@@ -136,24 +133,24 @@ module.exports = {
   },
   refresh: async (req, res) => {
     try {
-      const { userId, refreshToken } = req.body
-      console.log(req.body)
-      console.log(req.body)
+      const { refreshToken } = req.body
       // Jika userId pada dataRefreshToken
-      if (
-        userId in dataRefreshToken &&
-        dataRefreshToken[userId] === refreshToken
-      ) {
-        // Apa refreshToken masih bisa dipakai?
-        jwt.verify(refreshToken, process.env.PRIVATE_KEY, (error, result) => {
+      // Apa refreshToken masih bisa dipakai?
+      console.log(refreshToken)
+      console.log(refreshToken)
+      jwt.verify(refreshToken, process.env.PRIVATE_KEY, (error, result) => {
+        if (
+          (error && error.name === 'JsonWebTokenError') ||
+          (error && error.name === 'TokenExpiredError')
+        ) {
+          // Jika refreshToken tidak bisa dipakai lagi
+          delete dataRefreshToken.userId
+          return helper.response(res, 403, error.message)
+        } else {
           if (
-            (error && error.name === 'JsonWebTokenError') ||
-            (error && error.name === 'TokenExpiredError')
+            result.userId in dataRefreshToken &&
+            dataRefreshToken[result.userId] === refreshToken
           ) {
-            // Jika refreshToken tidak bisa dipakai lagi
-            delete dataRefreshToken.userId
-            return helper.response(res, 403, error.message)
-          } else {
             // Jika refreshToken masih bisa dipakai
             delete result.iat
             delete result.exp
@@ -167,12 +164,12 @@ module.exports = {
               'Refresh token succesful',
               newResult
             )
+          } else {
+            return helper.response(res, 403, 'Wrong refresh token')
           }
-        })
-        // Jika userId TIDAK ADA pada dataRefreshToken
-      } else {
-        return helper.response(res, 403, 'Wrong refresh token')
-      }
+        }
+      })
+      // Jika userId TIDAK ADA pada dataRefreshToken
     } catch (error) {
       return helper.response(res, 400, 'Bad Request', error)
     }

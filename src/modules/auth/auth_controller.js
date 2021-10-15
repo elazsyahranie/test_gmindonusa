@@ -108,7 +108,7 @@ module.exports = {
           delete payload.user_password
           delete payload.user_pin
           const token = jwt.sign({ ...payload }, process.env.PRIVATE_KEY, {
-            expiresIn: '20s'
+            expiresIn: '40s'
           })
           const refreshToken = jwt.sign(
             { ...payload },
@@ -158,7 +158,7 @@ module.exports = {
             delete result.iat
             delete result.exp
             const token = jwt.sign(result, process.env.PRIVATE_KEY, {
-              expiresIn: '20s'
+              expiresIn: '40s'
             })
             const newResult = { result, token, refreshToken }
             return helper.response(

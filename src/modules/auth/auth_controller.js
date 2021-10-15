@@ -136,8 +136,26 @@ module.exports = {
   },
   refresh: async (req, res) => {
     try {
+      const { userId, refreshToken } = req.body
       console.log(req.body)
       console.log(req.body)
+      if (
+        userId in dataRefreshToken &&
+        dataRefreshToken[userId] === refreshToken
+      ) {
+        jwt.verify(refreshToken, process.env.PRIVATE_KEY, (error, result) => {
+          if (
+            (error && error.name === 'JsonWebTokenError') ||
+            (error && error.name === 'TokenExpiredError')
+          ) {
+            console.log('GAGAL!')
+          } else {
+            console.log('BERHASIL')
+          }
+        })
+      } else {
+        return helper.response(res, 403, 'Wrong refresh token', error)
+      }
     } catch (error) {
       return helper.response(res, 400, 'Bad Request', error)
     }

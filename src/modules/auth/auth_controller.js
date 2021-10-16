@@ -108,7 +108,7 @@ module.exports = {
           delete payload.user_password
           delete payload.user_pin
           const token = jwt.sign({ ...payload }, process.env.PRIVATE_KEY, {
-            expiresIn: '40s'
+            expiresIn: '10s'
           })
           const refreshToken = jwt.sign(
             { ...payload },
@@ -137,25 +137,25 @@ module.exports = {
       // Jika userId pada dataRefreshToken
       // Apa refreshToken masih bisa dipakai?
       console.log(refreshToken)
-      console.log(refreshToken)
       jwt.verify(refreshToken, process.env.PRIVATE_KEY, (error, result) => {
         if (
           (error && error.name === 'JsonWebTokenError') ||
           (error && error.name === 'TokenExpiredError')
         ) {
           // Jika refreshToken tidak bisa dipakai lagi
-          delete dataRefreshToken.userId
+          delete dataRefreshToken.user_id
+          console.log(refreshToken)
           return helper.response(res, 403, error.message)
         } else {
           if (
-            result.userId in dataRefreshToken &&
-            dataRefreshToken[result.userId] === refreshToken
+            result.user_id in dataRefreshToken &&
+            dataRefreshToken[result.user_id] === refreshToken
           ) {
             // Jika refreshToken masih bisa dipakai
             delete result.iat
             delete result.exp
             const token = jwt.sign(result, process.env.PRIVATE_KEY, {
-              expiresIn: '40s'
+              expiresIn: '10s'
             })
             const newResult = { result, token, refreshToken }
             return helper.response(

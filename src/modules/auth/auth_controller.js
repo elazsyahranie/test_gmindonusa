@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt')
 const authModel = require('./auth_model')
 require('dotenv').config()
 const jwt = require('jsonwebtoken')
+const nodemailer = require('nodemailer')
 
 const dataRefreshToken = {}
 
@@ -47,34 +48,32 @@ module.exports = {
 
       if (checkEmailUser.length === 0) {
         const result = await authModel.register(setData)
-        // const transporter = nodemailer.createTransport({
-        //   host: 'smtp.gmail.com',
-        //   port: 587, // Kalau local 587, kalau heroku 465 (baca di Stack Overflow, tapi tadi coba ga berhasil)
-        //   secure: false, // true for 465, false for other ports
-        //   auth: {
-        //     user: process.env.SMTP_EMAIL, // generated ethereal user
-        //     pass: process.env.SMTP_PASSWORD // generated ethereal password
-        //   }
-        // })
+        const transporter = nodemailer.createTransport({
+          host: 'smtp.gmail.com',
+          port: 587, // Kalau local 587, kalau heroku 465 (baca di Stack Overflow, tapi tadi coba ga berhasil)
+          secure: false, // true for 465, false for other ports
+          auth: {
+            user: process.env.SMTP_EMAIL, // generated ethereal user
+            pass: process.env.SMTP_PASSWORD // generated ethereal password
+          }
+        })
 
-        // console.log(result.id)
+        const mailOptions = {
+          from: "'TALKAGRAM'", // sender address
+          to: userEmail, // list of receivers
+          subject: 'TALKAGRAM - Activation Email', // Subject line
+          html: `<h2>Hi there! </h2><a href='http://localhost:3007/api/v1/auth/verify-user/${result.id}'>Click here</> to activate your account!` // html body
+        }
 
-        // const mailOptions = {
-        //   from: "'TALKAGRAM'", // sender address
-        //   to: userEmail, // list of receivers
-        //   subject: 'TALKAGRAM - Activation Email', // Subject line
-        //   html: `<h2>Hi there! </h2><a href='http://localhost:3007/api/v1/auth/verify-user/${result.id}'>Click here</> to activate your account!` // html body
-        // }
-
-        // await transporter.sendMail(mailOptions, function (error, info) {
-        //   if (error) {
-        //     console.log(error)
-        //     return helper.response(res, 400, 'Email Not Send !')
-        //   } else {
-        //     console.log('Email sent: ' + info.response)
-        //     return helper.response(res, 200, 'Activation Email Sent')
-        //   }
-        // })
+        await transporter.sendMail(mailOptions, function (error, info) {
+          if (error) {
+            console.log(error)
+            return helper.response(res, 400, 'Email Not Send !')
+          } else {
+            console.log('Email sent: ' + info.response)
+            return helper.response(res, 200, 'Activation Email Sent')
+          }
+        })
         return helper.response(res, 200, 'Success Register User', result)
       } else {
         return helper.response(res, 400, 'Email already registered')
@@ -108,7 +107,7 @@ module.exports = {
           delete payload.user_password
           delete payload.user_pin
           const token = jwt.sign({ ...payload }, process.env.PRIVATE_KEY, {
-            expiresIn: '10s'
+            expiresIn: '1h'
           })
           const refreshToken = jwt.sign(
             { ...payload },
@@ -155,7 +154,7 @@ module.exports = {
             delete result.iat
             delete result.exp
             const token = jwt.sign(result, process.env.PRIVATE_KEY, {
-              expiresIn: '10s'
+              expiresIn: '1h'
             })
             const newResult = { result, token, refreshToken }
             return helper.response(

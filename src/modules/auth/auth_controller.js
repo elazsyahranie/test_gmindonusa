@@ -36,11 +36,14 @@ module.exports = {
       const salt = bcrypt.genSaltSync(10)
       const encryptPassword = bcrypt.hashSync(userPassword, salt)
       const setData = {
-        user_verification: '1',
         user_name: userName,
         user_email: userEmail,
         user_password: encryptPassword
       }
+
+      const token = jwt.sign({ ...setData }, process.env.PRIVATE_KEY, {
+        expiresIn: '2h'
+      })
 
       const checkEmailUser = await authModel.getDataByCondition({
         user_email: userEmail
@@ -48,6 +51,8 @@ module.exports = {
 
       if (checkEmailUser.length === 0) {
         const result = await authModel.register(setData)
+        console.log(token)
+        console.log(result)
         const transporter = nodemailer.createTransport({
           host: 'smtp.gmail.com',
           port: 587, // Kalau local 587, kalau heroku 465 (baca di Stack Overflow, tapi tadi coba ga berhasil)
@@ -62,7 +67,7 @@ module.exports = {
           from: "'TALKAGRAM'", // sender address
           to: userEmail, // list of receivers
           subject: 'TALKAGRAM - Activation Email', // Subject line
-          html: `<h2>Hi there! </h2><a href='http://localhost:3007/api/v1/auth/verify-user/${result.id}'>Click here</> to activate your account!` // html body
+          html: `<h2>Hi there! </h2><a href='http://localhost:3007/backend/api/v1/auth/verify-user/${result.id}/${token}'>Click here</> to activate your account!` // html body
         }
 
         await transporter.sendMail(mailOptions, function (error, info) {
@@ -199,47 +204,33 @@ module.exports = {
   },
   changeUserVerification: async (req, res) => {
     try {
-      let token = req.params.token
-      let userId = ''
-      let setData = {}
-      if (/^\d+$/.test(token)) {
-        userId = token
-        setData = { user_verification: 1 }
-        console.log(`This is the token! ${userId}`)
-      } else {
-        jwt.verify(token, process.env.PRIVATE_KEY, (error, result) => {
-          if (
-            (error && error.name === 'JsonWebTokenError') ||
-            (error && error.name === 'TokenExpiredError')
-          ) {
-            return helper.response(res, 403, error.message)
-          } else {
-            // console.log('DECODE token', result)
-            token = result
+      const { userId, token } = req.params
+      jwt.verify(token, process.env.PRIVATE_KEY, (error, result) => {
+        if (
+          (error && error.name === 'JsonWebTokenError') ||
+          (error && error.name === 'TokenExpiredError')
+        ) {
+          // Jika refreshToken tidak bisa  dipakai lagi
+          delete dataRefreshToken.user_id
+          return helper.response(res, 403, 'error_jwt_expired')
+        } else {
+          let setData = {
+            user_verification: '1'
           }
-        })
-        userId = token.userId
-        setData = token.setData
-      }
-      if (userId && setData) {
-        console.log(userId)
+        }
+      })
+      if (setData) {
         console.log(setData)
-        console.log('Trying!!')
-        // const result = await authModel.updateData(setData, userId)
-        // return helper.response(
-        //   res,
-        //   200,
-        //   'succes update data',
-        //   Object.keys(result)
-        // )
+        console.log(token)
+        console.log('Change user verification controller is working!')
       } else {
-        console.log('The Bad Request was from the Email')
-        return helper.response(res, 400, 'Bad Request', null)
+        console.log('Change user verification controller is NOT working!')
       }
+      // const result = await authModel.updateData(setData, userId)
+
+      // return helper.response(res, 200, 'User verification succesful', result)
     } catch (error) {
-      console.log('Nope. The Bad Request was from the request itself')
       console.log(error)
-      return helper.response(res, 400, 'Bad Request', error)
     }
   }
 }

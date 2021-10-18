@@ -172,47 +172,35 @@ module.exports = {
   },
   changeUserVerification: async (req, res) => {
     try {
-      let token = req.params.token
-      let userId = ''
-      let setData = {}
-      if (/^\d+$/.test(token)) {
-        userId = token
-        setData = { user_verification: 1 }
-        console.log(`This is the token! ${userId}`)
-      } else {
-        jwt.verify(token, process.env.PRIVATE_KEY, (error, result) => {
-          if (
-            (error && error.name === 'JsonWebTokenError') ||
-            (error && error.name === 'TokenExpiredError')
-          ) {
-            return helper.response(res, 403, error.message)
-          } else {
-            // console.log('DECODE token', result)
-            token = result
-          }
-        })
-        userId = token.userId
-        setData = token.setData
+      const { userId, token } = req.params
+      const setData = {
+        user_verification: '1'
       }
-      if (userId && setData) {
-        console.log(userId)
-        console.log(setData)
-        console.log('Trying!!')
-        // const result = await authModel.updateData(setData, userId)
-        // return helper.response(
-        //   res,
-        //   200,
-        //   'succes update data',
-        //   Object.keys(result)
-        // )
+      let verificationToken = ''
+      jwt.verify(token, process.env.PRIVATE_KEY, (error, result) => {
+        if (
+          (error && error.name === 'JsonWebTokenError') ||
+          (error && error.name === 'TokenExpiredError')
+        ) {
+          // Jika refreshToken tidak bisa  dipakai lagi
+          return helper.response(res, 403, 'error_jwt_expired')
+        } else {
+          verificationToken = token
+        }
+      })
+      if (verificationToken) {
+        const result = await authModel.updateData(setData, userId)
+        return helper.response(
+          res,
+          200,
+          `User ${userId} have been verified!`,
+          result
+        )
       } else {
-        console.log('The Bad Request was from the Email')
-        return helper.response(res, 400, 'Bad Request', null)
+        console.log('Change user verification controller is NOT working!')
       }
     } catch (error) {
-      console.log('Nope. The Bad Request was from the request itself')
       console.log(error)
-      return helper.response(res, 400, 'Bad Request', error)
     }
   }
 }

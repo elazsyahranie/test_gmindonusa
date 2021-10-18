@@ -18,7 +18,7 @@ Route.get('/', getAllUser)
 Route.post('/register', register)
 Route.post('/refresh', refresh)
 Route.post('/login', login)
-Route.get('/verify-user/:token', changeUserVerification)
+Route.get('/verify-user/:userId/:token', changeUserVerification)
 Route.patch('/:id', updateUser)
 Route.delete('/:id', deleteUser)
 module.exports = Route

@@ -205,30 +205,32 @@ module.exports = {
   changeUserVerification: async (req, res) => {
     try {
       const { userId, token } = req.params
+      const setData = {
+        user_verification: '1'
+      }
+      let verificationToken = ''
       jwt.verify(token, process.env.PRIVATE_KEY, (error, result) => {
         if (
           (error && error.name === 'JsonWebTokenError') ||
           (error && error.name === 'TokenExpiredError')
         ) {
           // Jika refreshToken tidak bisa  dipakai lagi
-          delete dataRefreshToken.user_id
           return helper.response(res, 403, 'error_jwt_expired')
         } else {
-          let setData = {
-            user_verification: '1'
-          }
+          verificationToken = token
         }
       })
-      if (setData) {
-        console.log(setData)
-        console.log(token)
-        console.log('Change user verification controller is working!')
+      if (verificationToken) {
+        const result = await authModel.updateData(setData, userId)
+        return helper.response(
+          res,
+          200,
+          `User ${userId} have been verified!`,
+          result
+        )
       } else {
         console.log('Change user verification controller is NOT working!')
       }
-      // const result = await authModel.updateData(setData, userId)
-
-      // return helper.response(res, 200, 'User verification succesful', result)
     } catch (error) {
       console.log(error)
     }
